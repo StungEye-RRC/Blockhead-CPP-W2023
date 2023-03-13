@@ -6,7 +6,6 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "../DebugHelper.h"
-#include "BlockHeadCPPW2023/Game/BlockHeadGameMode.h"
 
 using UEILPS = UEnhancedInputLocalPlayerSubsystem;
 using UEIC = UEnhancedInputComponent;
@@ -45,8 +44,9 @@ void APlayerCharacter::Tick(float DeltaTime) {
 // Called to bind functionality to input
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	if (UEIC* InputComponent = CastChecked<UEIC>(PlayerInputComponent)) {
-		InputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::MoveRightLeft);
+	if (UEIC* EnhancedInputComponent = CastChecked<UEIC>(PlayerInputComponent)) {
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this,
+		                                   &APlayerCharacter::MoveRightLeft);
 	}
 }
 
