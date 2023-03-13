@@ -1,27 +1,40 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PlayerCharacter.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "EnhancedInputComponent.h"
 #include "../DebugHelper.h"
+#include "BlockHeadCPPW2023/Game/BlockHeadGameMode.h"
+
+using UEILPS = UEnhancedInputLocalPlayerSubsystem;
+using UEIC = UEnhancedInputComponent;
 
 // Sets default values
 APlayerCharacter::APlayerCharacter() {
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	UE_LOG(LogTemp, Warning, TEXT("Hello from C++ Player Character Constructor."));
+	Cube = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Cube"));
+	RootComponent = Cube;
+
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	SpringArm->SetupAttachment(Cube);
+
+	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	Camera->SetupAttachment(SpringArm);
 }
 
 // Called when the game starts or when spawned
 void APlayerCharacter::BeginPlay() {
 	Super::BeginPlay();
 
-	int32 Answer = 42;
-	float Pi = 3.14;
-	FString Msg{"This is message."};
-
-	GLUTTON_LOG("Hello World");
-	GLUTTON_LOG(PREP("Log To Screen: %d", Answer));
-	GLUTTON_LOG(PREP("Log To Screen: %f", Pi));
-	GLUTTON_LOG(PREP("Log To Screen: %s", *Msg));
+	if (const APlayerController* PlayerController = Cast<APlayerController>(GetController())) {
+		const ULocalPlayer* LocalPlayer = PlayerController->GetLocalPlayer();
+		if (UEILPS* SubSystem = ULocalPlayer::GetSubsystem<UEILPS>(LocalPlayer)) {
+			SubSystem->AddMappingContext(InputMappingContext, 0);
+		}
+	}
 }
 
 // Called every frame
@@ -32,4 +45,12 @@ void APlayerCharacter::Tick(float DeltaTime) {
 // Called to bind functionality to input
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	if (UEIC* InputComponent = CastChecked<UEIC>(PlayerInputComponent)) {
+		InputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::MoveRightLeft);
+	}
+}
+
+void APlayerCharacter::MoveRightLeft(const FInputActionValue& Value) {
+	const float axis = Value.Get<float>();
+	GLUTTON_LOG(PREP("Axis: %f", axis));
 }

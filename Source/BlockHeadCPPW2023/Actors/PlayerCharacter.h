@@ -4,11 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "InputActionValue.h"
 #include "PlayerCharacter.generated.h"
 
 // Forward Declarations:
 class USpringArmComponent;
 class UCameraComponent;
+class UInputMappingContext;
+class UInputAction;
 
 UCLASS()
 class BLOCKHEADCPPW2023_API APlayerCharacter : public APawn {
@@ -30,19 +33,26 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Setup")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* Cube;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Setup")
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USpringArmComponent* SpringArm;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Setup")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UCameraComponent* Camera;
 
-	// class keyword forward declares so we don't need to include the headers.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputMappingContext* InputMappingContext;
 
-	UPROPERTY(EditAnywhere, Category = "Floats")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputAction* MoveAction;
+
+	void MoveRightLeft(const FInputActionValue& Value);
+
+	UPROPERTY(EditAnywhere, Category = "Movement")
 	float ForwardForce = 2000;
 
-	UPROPERTY(EditAnywhere, Category = "Floats")
+	UPROPERTY(EditAnywhere, Category = "Movement")
 	float SideForce = 5;
 };
