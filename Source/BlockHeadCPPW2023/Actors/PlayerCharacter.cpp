@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "PlayerCharacter.h"
+#include "../DebugHelper.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter() {
@@ -18,14 +18,10 @@ void APlayerCharacter::BeginPlay() {
 	float Pi = 3.14;
 	FString Msg{"This is message."};
 
-	UE_LOG(LogTemp, Warning, TEXT("Hello from C++ Player Character Begin Play."));
-	UE_LOG(LogTemp, Warning, TEXT("Hello Logging int: %d"), Answer);
-	UE_LOG(LogTemp, Warning, TEXT("Hello Logging float: %f"), Pi);
-	UE_LOG(LogTemp, Warning, TEXT("Hello Loggin Fstring: %s"), *Msg);
-	GEngine->AddOnScreenDebugMessage(0, 5.0f, FColor::Red,
-	                                 FString::Printf(
-		                                 TEXT("On Screen Hello Hello from C++ Player Character Begin Play: %d"),
-		                                 Answer));
+	GLUTTON_LOG("Hello World");
+	GLUTTON_LOG(PREP("Log To Screen: %d", Answer));
+	GLUTTON_LOG(PREP("Log To Screen: %f", Pi));
+	GLUTTON_LOG(PREP("Log To Screen: %s", *Msg));
 }
 
 // Called every frame
