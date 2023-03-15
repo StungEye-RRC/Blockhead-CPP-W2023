@@ -28,6 +28,11 @@ APlayerCharacter::APlayerCharacter() {
 void APlayerCharacter::BeginPlay() {
 	Super::BeginPlay();
 
+	if (!InputMappingContext) {
+		GLUTTON_LOG("Mapping Context missing. Please set one in root node details");
+		return;
+	}
+
 	if (const APlayerController* PlayerController = Cast<APlayerController>(GetController())) {
 		const ULocalPlayer* LocalPlayer = PlayerController->GetLocalPlayer();
 		if (UEILPS* SubSystem = ULocalPlayer::GetSubsystem<UEILPS>(LocalPlayer)) {
@@ -39,11 +44,22 @@ void APlayerCharacter::BeginPlay() {
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
+
+	if (!bLevelDone) {
+		const FVector CubeForce{ForwardForce, 0.0f, 0.0f};
+		Cube->AddForce(CubeForce, NAME_None, true);
+	}
 }
 
 // Called to bind functionality to input
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	if (!MoveAction) {
+		GLUTTON_LOG("Move Action input action missing. Please set one in root node details");
+		return;
+	}
+
 	if (UEIC* EnhancedInputComponent = CastChecked<UEIC>(PlayerInputComponent)) {
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this,
 		                                   &APlayerCharacter::MoveRightLeft);

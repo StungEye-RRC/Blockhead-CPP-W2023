@@ -55,4 +55,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float SideForce = 5;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool bLevelDone = false;
 };
