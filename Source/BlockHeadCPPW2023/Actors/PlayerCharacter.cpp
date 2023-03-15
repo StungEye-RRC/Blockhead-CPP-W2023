@@ -45,7 +45,7 @@ void APlayerCharacter::BeginPlay() {
 void APlayerCharacter::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
-	if (!bLevelDone) {
+	if (!bLevelEnded) {
 		const FVector CubeForce{ForwardForce, 0.0f, 0.0f};
 		Cube->AddForce(CubeForce, NAME_None, true);
 	}
@@ -68,5 +68,11 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void APlayerCharacter::MoveRightLeft(const FInputActionValue& Value) {
 	const float axis = Value.Get<float>();
-	GLUTTON_LOG(PREP("Axis: %f", axis));
+
+	// GLUTTON_LOG(PREP("Axis: %f", axis));
+
+	if (!bLevelEnded) {
+		const FVector CubeForce = FVector(0.0f, SideForce * axis, 0.0f);
+		Cube->AddForce(CubeForce, NAME_None, true);
+	}
 }

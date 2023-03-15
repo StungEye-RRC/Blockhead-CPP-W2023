@@ -57,5 +57,5 @@ protected:
 	float SideForce = 5;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	bool bLevelDone = false;
+	bool bLevelEnded = false;
 };
