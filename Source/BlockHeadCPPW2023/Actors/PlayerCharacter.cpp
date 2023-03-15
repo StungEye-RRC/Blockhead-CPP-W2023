@@ -1,10 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PlayerCharacter.h"
+
+#include "EndPoint.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Obstacle.h"
 #include "../DebugHelper.h"
 
 using UEILPS = UEnhancedInputLocalPlayerSubsystem;
@@ -74,5 +77,23 @@ void APlayerCharacter::MoveRightLeft(const FInputActionValue& Value) {
 	if (!bLevelEnded) {
 		const FVector CubeForce = FVector(0.0f, SideForce * axis, 0.0f);
 		Cube->AddForce(CubeForce, NAME_None, true);
+	}
+}
+
+void APlayerCharacter::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent,
+                             FVector NormalImpulse, const FHitResult& Hit) {
+	// Log a message if the cube hits an AObstacle actor:
+	if (OtherActor->IsA(AObstacle::StaticClass())) {
+		GLUTTON_LOG("Hit an obstacle!");
+	}
+}
+
+void APlayerCharacter::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                                 const FHitResult& SweepResult) {
+	// Log a message if the cube overlaps with an AEndPoint actor:
+	if (OtherActor->IsA(AEndPoint::StaticClass())) {
+		GLUTTON_LOG("Reached the end!");
+		bLevelEnded = true;
 	}
 }
