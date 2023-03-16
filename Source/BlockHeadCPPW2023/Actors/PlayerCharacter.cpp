@@ -2,6 +2,12 @@
 
 
 #include "PlayerCharacter.h"
+#include "EnhancedInputSubsystems.h"
+#include "EnhancedInputComponent.h"
+#include "../GluttonTools.h"
+
+using UEILPS = UEnhancedInputLocalPlayerSubsystem;
+using UEIC = UEnhancedInputComponent;
 
 // Sets default values
 APlayerCharacter::APlayerCharacter() {
@@ -14,18 +20,19 @@ APlayerCharacter::APlayerCharacter() {
 void APlayerCharacter::BeginPlay() {
 	Super::BeginPlay();
 
-	int32 Answer = 42;
-	float Pi = 3.14;
-	FString Msg{"This is message."};
+	if (const APlayerController* PlayerController = Cast<APlayerController>(GetController())) {
+		const ULocalPlayer* LocalPlayer = PlayerController->GetLocalPlayer();
+	UE_LOG(LogTemp, Warning, TEXT("Got Player Controller"));
+		if (UEILPS* SubSystem = ULocalPlayer::GetSubsystem<UEILPS>(LocalPlayer)) {
+	UE_LOG(LogTemp, Warning, TEXT("Got Local Player and SubSystem"));
+			SubSystem->AddMappingContext(InputMappingContext, 0);
+		}
+	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Hello from C++ Player Character Begin Play."));
-	UE_LOG(LogTemp, Warning, TEXT("Hello Logging int: %d"), Answer);
-	UE_LOG(LogTemp, Warning, TEXT("Hello Logging float: %f"), Pi);
-	UE_LOG(LogTemp, Warning, TEXT("Hello Loggin Fstring: %s"), *Msg);
-	GEngine->AddOnScreenDebugMessage(0, 5.0f, FColor::Red,
-	                                 FString::Printf(
-		                                 TEXT("On Screen Hello Hello from C++ Player Character Begin Play: %d"),
-		                                 Answer));
+	float Pi = 3.14;
+
+	GLUTTON_LOG("Hello from C++ Player Character Begin Play.");
+	GLUTTON_LOG(PRINTF("Hello Logging float: %f", Pi));
 }
 
 // Called every frame
@@ -36,4 +43,13 @@ void APlayerCharacter::Tick(float DeltaTime) {
 // Called to bind functionality to input
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	UEIC* EnhancedInputComponent = CastChecked<UEIC>(PlayerInputComponent);
+	if (EnhancedInputComponent) {
+	UE_LOG(LogTemp, Warning, TEXT("Got Enhanced Input Compontent Binding..."));
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::MoveRightLeft);
+	}
+}
+
+void APlayerCharacter::MoveRightLeft(const FInputActionValue& Value) {
+	UE_LOG(LogTemp, Warning, TEXT("Hello Logging float: %f"), Value.Get<float>());
 }
