@@ -22,17 +22,10 @@ void APlayerCharacter::BeginPlay() {
 
 	if (const APlayerController* PlayerController = Cast<APlayerController>(GetController())) {
 		const ULocalPlayer* LocalPlayer = PlayerController->GetLocalPlayer();
-	UE_LOG(LogTemp, Warning, TEXT("Got Player Controller"));
 		if (UEILPS* SubSystem = ULocalPlayer::GetSubsystem<UEILPS>(LocalPlayer)) {
-	UE_LOG(LogTemp, Warning, TEXT("Got Local Player and SubSystem"));
 			SubSystem->AddMappingContext(InputMappingContext, 0);
 		}
 	}
-
-	float Pi = 3.14;
-
-	GLUTTON_LOG("Hello from C++ Player Character Begin Play.");
-	GLUTTON_LOG(PRINTF("Hello Logging float: %f", Pi));
 }
 
 // Called every frame
@@ -43,9 +36,7 @@ void APlayerCharacter::Tick(float DeltaTime) {
 // Called to bind functionality to input
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	UEIC* EnhancedInputComponent = CastChecked<UEIC>(PlayerInputComponent);
-	if (EnhancedInputComponent) {
-	UE_LOG(LogTemp, Warning, TEXT("Got Enhanced Input Compontent Binding..."));
+	if (UEIC* EnhancedInputComponent = CastChecked<UEIC>(PlayerInputComponent)) {
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::MoveRightLeft);
 	}
 }
