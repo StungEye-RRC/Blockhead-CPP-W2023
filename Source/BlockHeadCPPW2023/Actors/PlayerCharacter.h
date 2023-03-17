@@ -51,12 +51,12 @@ protected:
 	void MoveRightLeft(const FInputActionValue& Value);
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
-	float ForwardForce = 2000;
+	float ForwardForce = 1900;
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
-	float SideForce = 5;
+	float SideForce = 1800;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement")
 	bool bLevelEnded = false;
 
 	// Function to handle hit events:
