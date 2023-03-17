@@ -42,6 +42,11 @@ void APlayerCharacter::BeginPlay() {
 			SubSystem->AddMappingContext(InputMappingContext, 0);
 		}
 	}
+
+	if (Cube) {
+		Cube->OnComponentHit.AddDynamic(this, &APlayerCharacter::OnHit);
+		Cube->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnBeginOverlap);
+	}
 }
 
 // Called every frame
@@ -80,15 +85,16 @@ void APlayerCharacter::MoveRightLeft(const FInputActionValue& Value) {
 
 void APlayerCharacter::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent,
                              FVector NormalImpulse, const FHitResult& Hit) {
-	if (OtherActor->IsA(AObstacle::StaticClass())) {
+	if (OtherActor->IsA(AObstacle::StaticClass()) && !bLevelEnded) {
 		GLUTTON_LOG("Hit an obstacle!");
+		bLevelEnded = true;
 	}
 }
 
-void APlayerCharacter::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-                                 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
-                                 const FHitResult& SweepResult) {
-	if (OtherActor->IsA(AEndPoint::StaticClass())) {
+void APlayerCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                      UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                                      const FHitResult& SweepResult) {
+	if (OtherActor->IsA(AEndPoint::StaticClass()) && !bLevelEnded) {
 		GLUTTON_LOG("Reached the end!");
 		bLevelEnded = true;
 	}

@@ -6,12 +6,14 @@
 #include "GameFramework/Actor.h"
 #include "EndPoint.generated.h"
 
+// Forward Declarations:
+class UBoxComponent;
+
 UCLASS()
-class BLOCKHEADCPPW2023_API AEndPoint : public AActor
-{
+class BLOCKHEADCPPW2023_API AEndPoint : public AActor {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	AEndPoint();
 
@@ -19,8 +21,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
+private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Setup")
+	UBoxComponent* Box;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Setup")
+	UStaticMeshComponent* Plane;
 };

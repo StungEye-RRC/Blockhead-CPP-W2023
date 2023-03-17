@@ -7,11 +7,10 @@
 #include "Obstacle.generated.h"
 
 UCLASS()
-class BLOCKHEADCPPW2023_API AObstacle : public AActor
-{
+class BLOCKHEADCPPW2023_API AObstacle : public AActor {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	AObstacle();
 
@@ -19,8 +18,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
+private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Setup")
+	UStaticMeshComponent* Cube;
 };
