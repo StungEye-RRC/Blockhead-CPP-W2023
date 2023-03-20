@@ -4,6 +4,8 @@
 #include "PlayerCharacter.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "../GluttonTools.h"
 
 using UEILPS = UEnhancedInputLocalPlayerSubsystem;
@@ -13,7 +15,16 @@ using UEIC = UEnhancedInputComponent;
 APlayerCharacter::APlayerCharacter() {
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	UE_LOG(LogTemp, Warning, TEXT("Hello from C++ Player Character Constructor."));
+
+	Cube = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Cube"));
+	Cube->SetSimulatePhysics(true);
+	RootComponent = Cube;
+
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	SpringArm->SetupAttachment(Cube);
+
+	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	Camera->SetupAttachment(SpringArm);
 }
 
 // Called when the game starts or when spawned
@@ -23,7 +34,11 @@ void APlayerCharacter::BeginPlay() {
 	if (const APlayerController* PlayerController = Cast<APlayerController>(GetController())) {
 		const ULocalPlayer* LocalPlayer = PlayerController->GetLocalPlayer();
 		if (UEILPS* SubSystem = ULocalPlayer::GetSubsystem<UEILPS>(LocalPlayer)) {
-			SubSystem->AddMappingContext(InputMappingContext, 0);
+			if (InputMappingContext) {
+				SubSystem->AddMappingContext(InputMappingContext, 0);
+			} else {
+				GLUTTON_LOG("No Mapping Context Selected in Blueprint.");
+			}
 		}
 	}
 }
@@ -31,16 +46,32 @@ void APlayerCharacter::BeginPlay() {
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
+
+	if (!bLevelEnded) {
+		const FVector CubeForce = FVector(ForwardForce, 0.0f, 0.0f);
+		Cube->AddForce(CubeForce, NAME_None, true);
+	}
 }
 
 // Called to bind functionality to input
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	if (UEIC* EnhancedInputComponent = CastChecked<UEIC>(PlayerInputComponent)) {
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::MoveRightLeft);
+		if (MoveAction) {
+			EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this,
+			                                   &APlayerCharacter::MoveRightLeft);
+		} else {
+			GLUTTON_LOG("No Move Action Selected in Blueprint.");
+		}
 	}
 }
 
 void APlayerCharacter::MoveRightLeft(const FInputActionValue& Value) {
-	UE_LOG(LogTemp, Warning, TEXT("Hello Logging float: %f"), Value.Get<float>());
+	const float MovementAxis = Value.Get<float>();
+	GLUTTON_LOG(PRINTF("Movement Axis: %f", MovementAxis));
+
+	if (!bLevelEnded) {
+		const FVector CubeForce = FVector(0.0f, MovementAxis * SideForce, 0.0f);
+		Cube->AddForce(CubeForce, NAME_None, true);
+	}
 }

@@ -7,12 +7,14 @@
 #include "InputActionValue.h"
 #include "PlayerCharacter.generated.h"
 
+// Forward Declarations:
 class UInputMappingContext;
 class UInputAction;
+class USpringArmComponent;
+class UCameraComponent;
 
 UCLASS()
-class BLOCKHEADCPPW2023_API APlayerCharacter : public APawn
-{
+class BLOCKHEADCPPW2023_API APlayerCharacter : public APawn {
 	GENERATED_BODY()
 
 public:
@@ -23,7 +25,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -31,6 +33,8 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
+	// ENHANCED INPUT SYSTEM
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputMappingContext* InputMappingContext;
 
@@ -38,9 +42,25 @@ protected:
 	UInputAction* MoveAction;
 
 	void MoveRightLeft(const FInputActionValue& Value);
+
+	// ASSET COMPONENTS
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Setup)
+	UStaticMeshComponent* Cube;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Setup)
+	USpringArmComponent* SpringArm;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Setup)
+	UCameraComponent* Camera;
+
+	// MOVEMENT VARIABLES
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float ForwardForce = 1800.0f;
+
+	UPROPERTY(EditAnywhere, Category="Movement")
+	float SideForce = 1800.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	bool bLevelEnded = false;
 };
-
-
-
-
-
