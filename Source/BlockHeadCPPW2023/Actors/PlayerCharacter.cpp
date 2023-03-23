@@ -1,11 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "PlayerCharacter.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Obstacle.h"
+#include "EndPoint.h"
 #include "../GluttonTools.h"
 
 using UEILPS = UEnhancedInputLocalPlayerSubsystem;
@@ -41,6 +42,12 @@ void APlayerCharacter::BeginPlay() {
 			}
 		}
 	}
+
+	if (Cube) {
+		GLUTTON_LOG("Setting up on component hit event!");
+		Cube->OnComponentHit.AddDynamic(this, &APlayerCharacter::OnHit);
+		Cube->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnBeginOverlap);
+	}
 }
 
 // Called every frame
@@ -73,5 +80,22 @@ void APlayerCharacter::MoveRightLeft(const FInputActionValue& Value) {
 	if (!bLevelEnded) {
 		const FVector CubeForce = FVector(0.0f, MovementAxis * SideForce, 0.0f);
 		Cube->AddForce(CubeForce, NAME_None, true);
+	}
+}
+
+void APlayerCharacter::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent,
+	FVector NormalImpulse, const FHitResult& Hit) {
+	if (OtherActor && OtherActor->IsA(AObstacle::StaticClass())) {
+		GLUTTON_LOG("ON HIT: OBSTACLE");
+		bLevelEnded = true;
+		Cube->SetPhysicsLinearVelocity({ 0, 0, 0 });
+	}
+}
+
+void APlayerCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {
+	if (OtherActor && OtherActor->IsA(AEndPoint::StaticClass())) {
+		GLUTTON_LOG("ON OVERLAP: END POINT");
+		bLevelEnded = true;
 	}
 }
