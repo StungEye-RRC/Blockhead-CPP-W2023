@@ -32,7 +32,7 @@ void UBlockHeadGameInstance::SetInputMode(bool GameOnly) const {
 		return;
 	}
 
-	if (APlayerController* Controller = World->GetFirstPlayerController()) {
+	if (APlayerController* const Controller = World->GetFirstPlayerController()) {
 		if (GameOnly) {
 			const FInputModeGameOnly InputMode;
 			Controller->SetInputMode(InputMode);
