@@ -14,9 +14,16 @@ class BLOCKHEADCPPW2023_API UBlockHeadGameInstance : public UGameInstance {
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Game Levels")
+	int32 CurrentLevel = 1;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game Levels")
-	TArray<class ULevel*> Levels;
+	TArray<TSoftObjectPtr<UWorld>> Levels;
 
 	virtual void Init() override;
-	void InitializeLevelArray();
+
+public:
+	bool LoadNextLevel();
+	bool LoadFirstLevel();
+	void SetInputMode(bool GameOnly) const;
 };

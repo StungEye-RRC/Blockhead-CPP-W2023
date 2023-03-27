@@ -12,6 +12,8 @@ class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
+class ABlockHeadGameMode;
+class UBlockHeadGameInstance;
 
 UCLASS()
 class BLOCKHEADCPPW2023_API APlayerCharacter : public APawn {
@@ -24,6 +26,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	void PlayerDied();
 
 public:
 	// Called every frame
@@ -56,8 +59,17 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float SideForce = 1800;
 
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float KillZThreshold = -300.0f;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement")
 	bool bLevelEnded = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UBlockHeadGameInstance* GameInstance;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	ABlockHeadGameMode* GameMode;
 
 private:
 	// Function to handle hit events:

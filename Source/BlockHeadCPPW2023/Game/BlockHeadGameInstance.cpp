@@ -2,42 +2,45 @@
 
 
 #include "BlockHeadGameInstance.h"
-#include "Engine/LevelStreaming.h"
-#include "Engine/AssetManager.h"
 #include "../DebugHelper.h"
+#include "Kismet/GameplayStatics.h"
 
 void UBlockHeadGameInstance::Init() {
 	Super::Init();
-	GLUTTON_LOG("In UBlockHeadGameInstance::Init()");
-	// Initialize the LevelArray
-	InitializeLevelArray();
 }
 
-void UBlockHeadGameInstance::InitializeLevelArray() {
-	// Get a reference to the current world
-
-	TArray<FAssetData> AssetData;
-	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<
-		FAssetRegistryModule>("AssetRegistry");
-	AssetRegistryModule.Get().GetAssetsByPackageName(FName("/All/Game/BlockHead/Maps/"), AssetData);
-
-	GLUTTON_LOG(PREP("Size of Asset Data: %d", AssetData.Num()));
-	for (auto& Asset : AssetData) {
-		FString AssetName = Asset.AssetName.ToString();
-		GLUTTON_LOG(AssetName);
-
-		// Check if the asset is a level
-		if (AssetName.StartsWith("/All/Game/BlockHead/Maps/") && AssetName.EndsWith(".umap")) {
-			// Load the level
-			ULevel* Level = LoadObject<ULevel>(nullptr, *AssetName);
-
-			if (Level) {
-				// Add the level to the array
-				Levels.Add(Level);
-			}
-		}
+bool UBlockHeadGameInstance::LoadNextLevel() {
+	if (CurrentLevel >= Levels.Num()) {
+		GLUTTON_LOG(PREP("No More Levels Left. Current: %d", CurrentLevel));
+		return false;
 	}
 
-	// Use GLUTTON_LOG and PREP to print the number of levels in the array
-	GLUTTON_LOG(PREP("Levels has %d elements", Levels.Num()));
+	GLUTTON_LOG(PREP("Loading Level %d", CurrentLevel));
+	UGameplayStatics::OpenLevelBySoftObjectPtr(this, Levels[CurrentLevel]);
+	CurrentLevel++;
+	return true;
+}
+
+bool UBlockHeadGameInstance::LoadFirstLevel() {
+	CurrentLevel = 0;
+	return LoadNextLevel();
+}
+
+void UBlockHeadGameInstance::SetInputMode(bool GameOnly) const {
+	const UWorld* World = GetWorld();
+	if (!World) {
+		return;
+	}
+
+	if (APlayerController* Controller = World->GetFirstPlayerController()) {
+		if (GameOnly) {
+			const FInputModeGameOnly InputMode;
+			Controller->SetInputMode(InputMode);
+			Controller->bShowMouseCursor = false;
+		} else {
+			const FInputModeUIOnly InputMode;
+			Controller->SetInputMode(InputMode);
+			Controller->bShowMouseCursor = true;
+		}
+	}
 }

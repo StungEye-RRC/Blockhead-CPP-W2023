@@ -1,14 +1,19 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+// Blockhead Includes
 #include "PlayerCharacter.h"
-
 #include "EndPoint.h"
+#include "Obstacle.h"
+#include "../Game/BlockHeadGameInstance.h"
+#include "../Game/BlockHeadGameMode.h"
+#include "../DebugHelper.h"
+
+// Unreal Includes
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
-#include "Obstacle.h"
-#include "../DebugHelper.h"
+#include "Kismet/GameplayStatics.h"
 
 using UEILPS = UEnhancedInputLocalPlayerSubsystem;
 using UEIC = UEnhancedInputComponent;
@@ -25,6 +30,9 @@ APlayerCharacter::APlayerCharacter() {
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
+
+	GameMode = Cast<ABlockHeadGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	GameInstance = Cast<UBlockHeadGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 }
 
 // Called when the game starts or when spawned
@@ -47,6 +55,20 @@ void APlayerCharacter::BeginPlay() {
 		Cube->OnComponentHit.AddDynamic(this, &APlayerCharacter::OnHit);
 		Cube->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnBeginOverlap);
 	}
+	if (GameInstance) {
+		GLUTTON_LOG("Got Instance");
+		GameInstance->SetInputMode(true);
+	}
+
+	if (GameMode) {
+		GLUTTON_LOG("Got Mode");
+	}
+}
+
+void APlayerCharacter::PlayerDied() {
+	GLUTTON_LOG("Player Died!");
+	bLevelEnded = true;
+	Cube->SetPhysicsLinearVelocity({0, 0, 0});
 }
 
 // Called every frame
@@ -56,6 +78,10 @@ void APlayerCharacter::Tick(float DeltaTime) {
 	if (!bLevelEnded) {
 		const FVector CubeForce{ForwardForce, 0.0f, 0.0f};
 		Cube->AddForce(CubeForce, NAME_None, true);
+		const FVector WorldLocation{GetActorLocation()};
+		if (WorldLocation.Z < KillZThreshold) {
+			PlayerDied();
+		}
 	}
 }
 
@@ -78,7 +104,7 @@ void APlayerCharacter::MoveRightLeft(const FInputActionValue& Value) {
 	const float MovementAxis = Value.Get<float>();
 
 	if (!bLevelEnded) {
-		const FVector CubeForce = FVector(0.0f, SideForce * MovementAxis, 0.0f);
+		const FVector CubeForce{0.0f, SideForce * MovementAxis, 0.0f};
 		Cube->AddForce(CubeForce, NAME_None, true);
 	}
 }
@@ -87,7 +113,7 @@ void APlayerCharacter::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAct
                              FVector NormalImpulse, const FHitResult& Hit) {
 	if (OtherActor->IsA(AObstacle::StaticClass()) && !bLevelEnded) {
 		GLUTTON_LOG("Hit an obstacle!");
-		bLevelEnded = true;
+		PlayerDied();
 	}
 }
 
@@ -97,5 +123,8 @@ void APlayerCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 	if (OtherActor->IsA(AEndPoint::StaticClass()) && !bLevelEnded) {
 		GLUTTON_LOG("Reached the end!");
 		bLevelEnded = true;
+		if (!GameInstance->LoadNextLevel()) {
+			GLUTTON_LOG("No more levels!");
+		}
 	}
 }
