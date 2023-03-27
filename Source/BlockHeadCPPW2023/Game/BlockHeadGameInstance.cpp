@@ -5,10 +5,6 @@
 #include "../DebugHelper.h"
 #include "Kismet/GameplayStatics.h"
 
-void UBlockHeadGameInstance::Init() {
-	Super::Init();
-}
-
 bool UBlockHeadGameInstance::LoadNextLevel() {
 	if (CurrentLevel >= Levels.Num()) {
 		GLUTTON_LOG(PREP("No More Levels Left. Current: %d", CurrentLevel));

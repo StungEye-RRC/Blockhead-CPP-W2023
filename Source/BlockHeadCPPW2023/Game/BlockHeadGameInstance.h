@@ -20,8 +20,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game Levels")
 	TArray<TSoftObjectPtr<UWorld>> Levels;
 
-	virtual void Init() override;
-
 public:
 	bool LoadNextLevel();
 	bool LoadFirstLevel();
