@@ -2,4 +2,8 @@
 
 
 #include "BlockHeadGameMode.h"
+#include "../GluttonTools.h"
 
+void ABlockHeadGameMode::TestMethod() {
+	GLUTTON_LOG("In Game Mode.");
+}

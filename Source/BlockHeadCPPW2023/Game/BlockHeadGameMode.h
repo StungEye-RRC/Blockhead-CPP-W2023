@@ -10,8 +10,9 @@
  * 
  */
 UCLASS()
-class BLOCKHEADCPPW2023_API ABlockHeadGameMode : public AGameModeBase
-{
+class BLOCKHEADCPPW2023_API ABlockHeadGameMode : public AGameModeBase {
 	GENERATED_BODY()
-	
+
+public:
+	void TestMethod();
 };
