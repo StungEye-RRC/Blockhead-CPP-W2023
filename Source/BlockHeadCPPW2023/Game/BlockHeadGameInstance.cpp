@@ -36,11 +36,11 @@ void UBlockHeadGameInstance::SetInputMode(bool GameOnly) const {
 		if (GameOnly) {
 			const FInputModeGameOnly InputMode;
 			Controller->SetInputMode(InputMode);
-			Controller->bShowMouseCursor = false;
 		} else {
 			const FInputModeUIOnly InputMode;
 			Controller->SetInputMode(InputMode);
-			Controller->bShowMouseCursor = true;
 		}
+
+		Controller->bShowMouseCursor = !GameOnly;
 	}
 }
