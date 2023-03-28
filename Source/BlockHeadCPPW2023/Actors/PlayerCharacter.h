@@ -65,10 +65,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement")
 	bool bLevelEnded = false;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UBlockHeadGameInstance* GameInstance;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	//UBlockHeadGameInstance* GameInstance;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly)
 	ABlockHeadGameMode* GameMode;
 
 private:

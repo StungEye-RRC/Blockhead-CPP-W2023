@@ -17,11 +17,16 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Game Levels")
 	int32 CurrentLevel = 1;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game Levels")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Game Levels")
 	TArray<TSoftObjectPtr<UWorld>> Levels;
 
 public:
-	bool LoadNextLevel();
-	bool LoadFirstLevel();
+	void LoadNextLevel();
+	bool IsPlayerOnFinalLevel() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Input Mode")
 	void SetInputMode(bool GameOnly) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Game Levels")
+	void LoadFirstLevel();
 };

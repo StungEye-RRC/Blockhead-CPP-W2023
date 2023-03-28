@@ -6,12 +6,33 @@
 #include "GameFramework/GameModeBase.h"
 #include "BlockHeadGameMode.generated.h"
 
-/**
- * 
- */
+// Forward Declarations:
+class UBlockHeadGameInstance;
+
 UCLASS()
-class BLOCKHEADCPPW2023_API ABlockHeadGameMode : public AGameModeBase
-{
+class BLOCKHEADCPPW2023_API ABlockHeadGameMode : public AGameModeBase {
 	GENERATED_BODY()
-	
+
+protected:
+	virtual void BeginPlay() override;
+
+	UPROPERTY(BlueprintReadOnly)
+	UBlockHeadGameInstance* GameInstance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UMG")
+	TSubclassOf<UUserWidget> DefaultLevelCompleteWidget;
+	UPROPERTY() // Prevents the widget from being garbage collected.
+	UUserWidget* LevelCompleteWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UMG")
+	TSubclassOf<UUserWidget> DefaultGameCompleteWidget;
+	UPROPERTY()
+	UUserWidget* GameCompleteWidget;
+
+	FTimerHandle LevelSwapTimer;
+
+public:
+	void LevelCompleted();
+	void NextLevel();
+	void GameCompleted(bool PlayerWon);
 };

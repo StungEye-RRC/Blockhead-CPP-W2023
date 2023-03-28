@@ -5,21 +5,24 @@
 #include "../DebugHelper.h"
 #include "Kismet/GameplayStatics.h"
 
-bool UBlockHeadGameInstance::LoadNextLevel() {
+void UBlockHeadGameInstance::LoadNextLevel() {
 	if (CurrentLevel >= Levels.Num()) {
 		GLUTTON_LOG(PREP("No More Levels Left. Current: %d", CurrentLevel));
-		return false;
+		return;
 	}
 
 	GLUTTON_LOG(PREP("Loading Level %d", CurrentLevel));
 	UGameplayStatics::OpenLevelBySoftObjectPtr(this, Levels[CurrentLevel]);
 	CurrentLevel++;
-	return true;
 }
 
-bool UBlockHeadGameInstance::LoadFirstLevel() {
+bool UBlockHeadGameInstance::IsPlayerOnFinalLevel() const {
+	return CurrentLevel >= Levels.Num();
+}
+
+void UBlockHeadGameInstance::LoadFirstLevel() {
 	CurrentLevel = 0;
-	return LoadNextLevel();
+	LoadNextLevel();
 }
 
 void UBlockHeadGameInstance::SetInputMode(bool GameOnly) const {

@@ -4,7 +4,7 @@
 #include "PlayerCharacter.h"
 #include "EndPoint.h"
 #include "Obstacle.h"
-#include "../Game/BlockHeadGameInstance.h"
+//#include "../Game/BlockHeadGameInstance.h"
 #include "../Game/BlockHeadGameMode.h"
 #include "../DebugHelper.h"
 
@@ -32,7 +32,7 @@ APlayerCharacter::APlayerCharacter() {
 	Camera->SetupAttachment(SpringArm);
 
 	GameMode = Cast<ABlockHeadGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	GameInstance = Cast<UBlockHeadGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	//GameInstance = Cast<UBlockHeadGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 }
 
 // Called when the game starts or when spawned
@@ -54,10 +54,6 @@ void APlayerCharacter::BeginPlay() {
 	if (Cube) {
 		Cube->OnComponentHit.AddDynamic(this, &APlayerCharacter::OnHit);
 		Cube->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnBeginOverlap);
-	}
-	if (GameInstance) {
-		GLUTTON_LOG("Got Instance");
-		GameInstance->SetInputMode(true);
 	}
 
 	if (GameMode) {
@@ -123,8 +119,6 @@ void APlayerCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 	if (OtherActor->IsA(AEndPoint::StaticClass()) && !bLevelEnded) {
 		GLUTTON_LOG("Reached the end!");
 		bLevelEnded = true;
-		if (!GameInstance->LoadNextLevel()) {
-			GLUTTON_LOG("No more levels!");
-		}
+		GameMode->LevelCompleted();
 	}
 }
