@@ -3,9 +3,9 @@
 
 #include "BlockHeadGameMode.h"
 #include "BlockHeadGameInstance.h"
+
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
-
 #include "Kismet/GameplayStatics.h"
 
 void ABlockHeadGameMode::BeginPlay() {
