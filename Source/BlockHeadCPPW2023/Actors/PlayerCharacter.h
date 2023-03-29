@@ -65,11 +65,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement")
 	bool bLevelEnded = false;
 
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	//UBlockHeadGameInstance* GameInstance;
-
 	UPROPERTY(BlueprintReadOnly)
 	ABlockHeadGameMode* GameMode;
+
+	FTimerHandle GameOverTimer;
 
 private:
 	// Function to handle hit events:

@@ -32,7 +32,6 @@ APlayerCharacter::APlayerCharacter() {
 	Camera->SetupAttachment(SpringArm);
 
 	GameMode = Cast<ABlockHeadGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	//GameInstance = Cast<UBlockHeadGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 }
 
 // Called when the game starts or when spawned
@@ -65,6 +64,7 @@ void APlayerCharacter::PlayerDied() {
 	GLUTTON_LOG("Player Died!");
 	bLevelEnded = true;
 	Cube->SetPhysicsLinearVelocity({0, 0, 0});
+	GetWorldTimerManager().SetTimer(GameOverTimer, [this]() { this->GameMode->GameCompleted(false); }, 2.0f, false);
 }
 
 // Called every frame
