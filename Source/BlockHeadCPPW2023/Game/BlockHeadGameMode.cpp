@@ -2,8 +2,28 @@
 
 
 #include "BlockHeadGameMode.h"
+#include "BlockHeadGameInstance.h"
 #include "../GluttonTools.h"
 
-void ABlockHeadGameMode::TestMethod() {
-	GLUTTON_LOG("In Game Mode.");
+#include "Kismet/GameplayStatics.h"
+
+void ABlockHeadGameMode::BeginPlay() {
+	Super::BeginPlay();
+	GameInstance = CastChecked<UBlockHeadGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	if (GameInstance) {
+		GameInstance->SetInputMode(true);
+	}
 }
+
+void ABlockHeadGameMode::LevelCompleted() {
+	GetWorldTimerManager().SetTimer(LevelSwapTimer, this, &ABlockHeadGameMode::NextLevel, 2.0f);
+}
+
+void ABlockHeadGameMode::NextLevel() {
+	GameInstance->LoadNextLevel();
+}
+
+void ABlockHeadGameMode::GameCompleted(bool PlayerWon) {
+}
+

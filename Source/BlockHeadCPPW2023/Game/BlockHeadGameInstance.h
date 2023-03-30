@@ -14,15 +14,19 @@ class BLOCKHEADCPPW2023_API UBlockHeadGameInstance : public UGameInstance {
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Game Levels")
 	int32 CurrentLevel = 1;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TArray<FName> Levels;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TArray<TSoftObjectPtr<UWorld>> ProperLevels;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Game Levels")
+	TArray<TSoftObjectPtr<UWorld>> Levels;
 
 public:
-	void TestMethod();
+	void LoadNextLevel();
+	bool IsPlayerOnFinalLevel() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Input Mode")
+	void SetInputMode(bool GameOnly) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Game Levels")
+	void LoadFirstLevel();
 };

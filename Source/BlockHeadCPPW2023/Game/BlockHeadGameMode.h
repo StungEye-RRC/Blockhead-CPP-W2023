@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "BlockHeadGameMode.generated.h"
 
+class UBlockHeadGameInstance;
 /**
  * 
  */
@@ -13,6 +14,17 @@ UCLASS()
 class BLOCKHEADCPPW2023_API ABlockHeadGameMode : public AGameModeBase {
 	GENERATED_BODY()
 
+protected:
+	virtual void BeginPlay() override;
+	void NextLevel();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UBlockHeadGameInstance* GameInstance;
+
+	FTimerHandle LevelSwapTimer;
+
 public:
-	void TestMethod();
+	void LevelCompleted();
+	void GameCompleted(bool PlayerWon);
+
 };
