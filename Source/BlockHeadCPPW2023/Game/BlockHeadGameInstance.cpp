@@ -22,6 +22,7 @@ bool UBlockHeadGameInstance::IsPlayerOnFinalLevel() const {
 
 void UBlockHeadGameInstance::LoadFirstLevel() {
 	CurrentLevel = 0;
+	Score = 0;
 	LoadNextLevel();
 }
 
