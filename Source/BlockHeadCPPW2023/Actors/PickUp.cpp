@@ -36,11 +36,16 @@ void APickUp::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 }
 
+// Will re-run when Point Light color is changed for instances.
+// Syncs the color of the cube and the particle system to the point light color.
+// Point Light color isn't available until now (0,0,0,0) in constructor.
+// Dynamic material can't be created/set until now also.
 void APickUp::OnConstruction(const FTransform& Transform) {
 	Super::OnConstruction(Transform);
 	const FLinearColor LightColor = PointLight->GetLightColor();
 
 	if (PickupFX) {
+		// Niagara system must have user parameter named "Pickup Color"
 		PickupFX->SetVariableLinearColor(FName{"Pickup Color"}, LightColor);
 	}
 
@@ -49,6 +54,7 @@ void APickUp::OnConstruction(const FTransform& Transform) {
 	}
 
 	if (DynamicMaterial) {
+		// Material Instance for Cube must have a vector parameter named "Base Color"
 		DynamicMaterial->SetVectorParameterValue(FName{"Base Color"}, LightColor);
 	}
 }
@@ -57,7 +63,6 @@ void APickUp::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
                              UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
                              const FHitResult& SweepResult) {
 	if (OtherActor && OtherActor->IsA(APlayerCharacter::StaticClass())) {
-		GLUTTON_LOG(PREP("PickUp::OnBeginOverlap: %s", *OtherActor->GetName()));
 		ScoreChanged.Broadcast(ScoreValue);
 		Destroy();
 	}

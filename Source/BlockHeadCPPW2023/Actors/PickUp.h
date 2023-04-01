@@ -26,6 +26,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	// Called after constructor and repeatedly anytime the instance is moved/edited in viewport.
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 public:
