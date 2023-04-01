@@ -3,6 +3,7 @@
 
 #include "BlockHeadGameMode.h"
 #include "BlockHeadGameInstance.h"
+#include "BlockHeadCPPW2023/DebugHelper.h"
 
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
@@ -13,6 +14,13 @@ void ABlockHeadGameMode::BeginPlay() {
 
 	GameInstance = Cast<UBlockHeadGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	GameInstance->SetInputMode(true);
+
+	if (DefaultHUDWidget) {
+		HUDWidget = CreateWidget<UUserWidget>(GetWorld(), DefaultHUDWidget);
+		HUDWidget->AddToViewport();
+	} else {
+		GLUTTON_LOG("No HUD specified in Game Mode Blueprint.");
+	}
 }
 
 void ABlockHeadGameMode::LevelCompleted() {

@@ -29,6 +29,11 @@ protected:
 	UPROPERTY()
 	UUserWidget* GameCompleteWidget;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UMG")
+	TSubclassOf<UUserWidget> DefaultHUDWidget;
+	UPROPERTY()
+	UUserWidget* HUDWidget;
+
 	FTimerHandle LevelSwapTimer;
 
 public:

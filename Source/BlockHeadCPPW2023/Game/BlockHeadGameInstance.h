@@ -20,6 +20,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Game Levels")
 	TArray<TSoftObjectPtr<UWorld>> Levels;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Score")
+	int32 Score = 0;
+
 public:
 	void LoadNextLevel();
 	bool IsPlayerOnFinalLevel() const;
@@ -29,4 +32,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Game Levels")
 	void LoadFirstLevel();
+
+	UFUNCTION(BlueprintCallable, Category = "Score")
+	int32 UpdateScore(int32 ScoreDelta);
 };

@@ -62,7 +62,8 @@ void APlayerCharacter::BeginPlay() {
 void APlayerCharacter::PlayerDied() {
 	GLUTTON_LOG("Player Died!");
 	bLevelEnded = true;
-	Cube->SetPhysicsLinearVelocity({0, 0, 0});
+	const FVector Velocity = Cube->GetPhysicsLinearVelocity();
+	Cube->SetPhysicsLinearVelocity(Velocity * 0.3f);
 	GetWorldTimerManager().SetTimer(GameOverTimer, [this]() { this->GameMode->GameCompleted(false); }, 2.0f, false);
 }
 
@@ -118,6 +119,8 @@ void APlayerCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 	if (OtherActor->IsA(AEndPoint::StaticClass()) && !bLevelEnded) {
 		GLUTTON_LOG("Reached the end!");
 		bLevelEnded = true;
+		const FVector Velocity = Cube->GetPhysicsLinearVelocity();
+		Cube->SetPhysicsLinearVelocity(Velocity * 0.6f);
 		GameMode->LevelCompleted();
 	}
 }

@@ -25,6 +25,12 @@ void UBlockHeadGameInstance::LoadFirstLevel() {
 	LoadNextLevel();
 }
 
+int32 UBlockHeadGameInstance::UpdateScore(int32 ScoreDelta) {
+	Score += ScoreDelta;
+	return Score;
+}
+
+
 void UBlockHeadGameInstance::SetInputMode(bool GameOnly) const {
 	const UWorld* World = GetWorld();
 	if (!World) {
