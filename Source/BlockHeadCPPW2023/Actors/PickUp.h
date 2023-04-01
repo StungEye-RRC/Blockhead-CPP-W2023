@@ -10,6 +10,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnScoreChangedSignature, int32, Sco
 
 class UPointLightComponent;
 class UNiagaraComponent;
+class UMaterialInstanceDynamic;
 
 UCLASS()
 class BLOCKHEADCPPW2023_API APickUp : public AActor {
@@ -25,6 +26,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void OnConstruction(const FTransform& Transform) override;
 
 public:
 	// Called every frame
@@ -46,4 +48,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "Setup")
 	UNiagaraComponent* PickupFX;
+
+	UPROPERTY()
+	UMaterialInstanceDynamic* DynamicMaterial;
 };

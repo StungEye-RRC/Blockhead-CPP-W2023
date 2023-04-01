@@ -6,6 +6,7 @@
 #include "../DebugHelper.h"
 #include "NiagaraComponent.h"
 #include "Components/PointLightComponent.h"
+#include "Materials/MaterialInstanceDynamic.h"
 
 // Sets default values
 APickUp::APickUp() {
@@ -24,7 +25,6 @@ APickUp::APickUp() {
 // Called when the game starts or when spawned
 void APickUp::BeginPlay() {
 	Super::BeginPlay();
-	PickupFX->SetVariableLinearColor(FName{"Pickup Color"}, PointLight->GetLightColor());
 
 	if (Cube) {
 		Cube->OnComponentBeginOverlap.AddDynamic(this, &APickUp::OnBeginOverlap);
@@ -34,6 +34,23 @@ void APickUp::BeginPlay() {
 // Called every frame
 void APickUp::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
+}
+
+void APickUp::OnConstruction(const FTransform& Transform) {
+	Super::OnConstruction(Transform);
+	const FLinearColor LightColor = PointLight->GetLightColor();
+
+	if (PickupFX) {
+		PickupFX->SetVariableLinearColor(FName{"Pickup Color"}, LightColor);
+	}
+
+	if (!DynamicMaterial) {
+		DynamicMaterial = Cube->CreateAndSetMaterialInstanceDynamic(0);
+	}
+
+	if (DynamicMaterial) {
+		DynamicMaterial->SetVectorParameterValue(FName{"Base Color"}, LightColor);
+	}
 }
 
 void APickUp::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
