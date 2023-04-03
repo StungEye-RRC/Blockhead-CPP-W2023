@@ -8,7 +8,6 @@
 #include "Obstacle.h"
 #include "EndPoint.h"
 #include "Kismet/GameplayStatics.h"
-#include "../Game/BlockHeadGameInstance.h"
 #include "../Game/BlockHeadGameMode.h"
 #include "../GluttonTools.h"
 
@@ -23,6 +22,7 @@ APlayerCharacter::APlayerCharacter() {
 
 	Cube = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Cube"));
 	Cube->SetSimulatePhysics(true);
+	Cube->SetNotifyRigidBodyCollision(true);
 	RootComponent = Cube;
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
@@ -59,7 +59,11 @@ void APlayerCharacter::BeginPlay() {
 void APlayerCharacter::PlayerDied() {
 	GLUTTON_LOG("Player Died!");
 	bLevelEnded = true;
-	Cube->SetPhysicsLinearVelocity({0, 0, 0});
+	Cube->SetPhysicsLinearVelocity(Cube->GetPhysicsLinearVelocity() * 0.5f);
+	// Call the game mode game complete (with a false arg)
+	// But do so using a timer, such that it triggers after 2 seconds.
+	// A timer handle will need to be added to this class (header).
+	GetWorldTimerManager().SetTimer(GameCompleteTimerHandle, [this]() { GameMode->GameCompleted(false); }, 2.0f, false);
 }
 
 // Called every frame
@@ -102,7 +106,9 @@ void APlayerCharacter::MoveRightLeft(const FInputActionValue& Value) {
 
 void APlayerCharacter::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent,
                              FVector NormalImpulse, const FHitResult& Hit) {
+	GLUTTON_LOG("ON HIT");
 	if (OtherActor && OtherActor->IsA(AObstacle::StaticClass())) {
+		GLUTTON_LOG("ON HIT: OBSTACLE");
 		PlayerDied();
 	}
 }
@@ -113,18 +119,7 @@ void APlayerCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 	if (OtherActor && OtherActor->IsA(AEndPoint::StaticClass())) {
 		GLUTTON_LOG("ON OVERLAP: END POINT");
 		bLevelEnded = true;
+		Cube->SetPhysicsLinearVelocity(Cube->GetPhysicsLinearVelocity() * 0.5f);
 		GameMode->LevelCompleted();
 	}
 }
-
-
-/*
- * - Add two pointer properties to your player character:
- *   - One for a pointer to the game mode.
- *	 - One for a pointer to the game instance.
- * - From the constructor (or maybe beginplay) get a pointer to both of these
- *   things from the Gameplay Statics functions.
- * - Cast those returned pointers to the Blockhead versions of those classes.
- * - Add a simple method to each of your C++ class (game mode and instance)
- *   that include log statements that you can call from your player character for testing.
-*/

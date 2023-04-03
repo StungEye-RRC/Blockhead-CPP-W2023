@@ -18,13 +18,25 @@ protected:
 	virtual void BeginPlay() override;
 	void NextLevel();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly)
 	UBlockHeadGameInstance* GameInstance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UMG")
+	TSubclassOf<UUserWidget> DefaultLevelCompleteWidget;
+	UPROPERTY()
+	UUserWidget* LevelCompleteWidget;
+
+	// Step 1: In the Game Mode Header File:
+	// Set up the required variable and pointers for another UMG widget,
+	// specifically the Game Complete widget.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UMG")
+	TSubclassOf<UUserWidget> DefaultGameCompleteWidget;
+	UPROPERTY()
+	UUserWidget* GameCompleteWidget;
 
 	FTimerHandle LevelSwapTimer;
 
 public:
 	void LevelCompleted();
 	void GameCompleted(bool PlayerWon);
-
 };
