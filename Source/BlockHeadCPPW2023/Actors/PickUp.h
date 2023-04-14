@@ -20,6 +20,7 @@ public:
 	// Sets default values for this actor's properties
 	APickUp();
 
+	// Delegate that will be broadcast when the score changes.
 	UPROPERTY(BlueprintAssignable)
 	FOnScoreChangedSignature ScoreChanged;
 
@@ -28,10 +29,6 @@ protected:
 	virtual void BeginPlay() override;
 	// Called after constructor and repeatedly anytime the instance is moved/edited in viewport.
 	virtual void OnConstruction(const FTransform& Transform) override;
-
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 private:
 	UFUNCTION()

@@ -11,7 +11,7 @@
 // Sets default values
 APickUp::APickUp() {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	Cube = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Cube"));
 	Cube->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
@@ -29,11 +29,6 @@ void APickUp::BeginPlay() {
 	if (Cube) {
 		Cube->OnComponentBeginOverlap.AddDynamic(this, &APickUp::OnBeginOverlap);
 	}
-}
-
-// Called every frame
-void APickUp::Tick(float DeltaTime) {
-	Super::Tick(DeltaTime);
 }
 
 // Will re-run when Point Light color is changed for instances.
